@@ -9,7 +9,7 @@ import {
   canUpdateTaskStatus,
   canAssignEmployees,
 } from "../utils/permissions";
-import { apiDownload } from "../utils/api";
+import { apiDownload, apiUpload } from "../utils/api";
 import { useToast } from "../components/ToastProvider";
 import Spinner from "../components/ui/Spinner";
 import EmptyState from "../components/ui/EmptyState";
@@ -611,6 +611,21 @@ const Tasks: React.FC = () => {
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(errorText || "Failed to create task");
+        }
+
+        const createdTask = await response.json();
+
+        // Upload attachments if any were selected
+        if (formData.attachments && formData.attachments.length > 0) {
+          for (const file of formData.attachments) {
+            const fd = new FormData();
+            fd.append("file", file);
+            try {
+              await apiUpload(`/tasks/${createdTask.taskId}/attachments`, fd);
+            } catch (uploadErr) {
+              console.warn("Attachment upload failed:", uploadErr);
+            }
+          }
         }
 
         // Refresh the task list to get the newly created task
