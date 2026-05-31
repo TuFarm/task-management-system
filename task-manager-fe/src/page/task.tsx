@@ -9,7 +9,7 @@ import {
   canUpdateTaskStatus,
   canAssignEmployees,
 } from "../utils/permissions";
-import { apiDownload, apiUpload } from "../utils/api";
+import { apiDownload, apiUpload, apiPut } from "../utils/api";
 import { useToast } from "../components/ToastProvider";
 import Spinner from "../components/ui/Spinner";
 import EmptyState from "../components/ui/EmptyState";
@@ -543,21 +543,7 @@ const Tasks: React.FC = () => {
         };
 
         // Call backend API to update task
-        const response = await fetch(
-          `${API_BASE_URL}/api/tasks/${selectedTask.task_id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          }
-        );
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText || "Failed to update task");
-        }
+        await apiPut(`/tasks/${selectedTask.task_id}`, requestBody);
 
         // Refresh the task list to get the updated task
         await fetchData();
