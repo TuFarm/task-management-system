@@ -3,9 +3,9 @@ spring:
     name: task-manager
 
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/task_manager_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true}
-    username: root
-    password: ${DB_PASSWORD:123123}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       minimum-idle: 5
@@ -40,12 +40,12 @@ server:
 
 app:
   jwt:
-    secret: B1qGYlw2s6jcsjAGFe4e8sVSfhofN07o12xQfoTR1Mj
+    secret: ${JWT_SECRET}
     expiration: ${JWT_EXPIRATION:86400000} # 24h in ms
   upload:
     dir: ${UPLOAD_DIR:./uploads}
   cors:
-    allowed-origins: ${FRONTEND_URL:http://localhost:5173,http://localhost:5174}
+    allowed-origins: ${FRONTEND_URL}
 
 logging:
   level:
