@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: task-manager
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/task_manager_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true}
+    username: root
+    password: ${DB_PASSWORD:123123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      # Flyway owns the schema; Hibernate only validates that entities match it.
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Flyway runs all migrations in db/migration on startup
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
+
+server:
+  port: ${SERVER_PORT:8080}
+
+app:
+  jwt:
+    secret: B1qGYlw2s6jcsjAGFe4e8sVSfhofN07o12xQfoTR1Mj
+    expiration: ${JWT_EXPIRATION:86400000} # 24h in ms
+  upload:
+    dir: ${UPLOAD_DIR:./uploads}
+  cors:
+    allowed-origins: ${FRONTEND_URL:http://localhost:5173,http://localhost:5174}
+
+logging:
+  level:
+    com.taskmanagement: INFO
+    org.springframework.security: WARN

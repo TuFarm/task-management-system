@@ -1,0 +1,323 @@
+.trash-main {
+  margin-left: 260px;
+  flex: 1;
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.trash-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.trash-header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.trash-refresh-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  color: white;
+  background: #4f46e5;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  font-family: inherit;
+  align-self: flex-start;
+}
+
+.trash-refresh-btn:hover:not(:disabled) {
+  background: #5b52f0;
+  transform: translateY(-1px);
+}
+
+.trash-refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.trash-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
+}
+
+.trash-subtitle {
+  font-size: 1rem;
+  color: #718096;
+  margin: 0;
+}
+
+/* Empty State */
+.trash-empty {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.trash-empty-icon {
+  color: #cbd5e0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trash-empty-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin: 0;
+}
+
+/* Trash List */
+.trash-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.trash-item {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.trash-item:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.trash-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.trash-item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.trash-item-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+  flex: 1;
+  min-width: 200px;
+}
+
+.trash-item-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.priority-badge,
+.category-badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  text-transform: capitalize;
+}
+
+.category-badge {
+  background: #4f46e5;
+}
+
+.trash-item-description {
+  color: #718096;
+  font-size: 0.9375rem;
+  margin: 0 0 1rem 0;
+  line-height: 1.6;
+}
+
+.trash-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trash-item-info {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.trash-item-label {
+  color: #a0aec0;
+  font-weight: 500;
+  min-width: 120px;
+}
+
+.trash-item-value {
+  color: #4a5568;
+  font-weight: 400;
+}
+
+.trash-item-value.warning {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.trash-item-value.danger {
+  color: #f44336;
+  font-weight: 600;
+}
+
+.trash-item-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.btn-restore,
+.btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  white-space: nowrap;
+  min-width: 140px;
+}
+
+.btn-restore {
+  background: #4299e1;
+  color: white;
+}
+
+.btn-restore:hover {
+  background: #3182ce;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
+}
+
+.btn-delete {
+  background: #f44336;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #d32f2f;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+.btn-restore svg,
+.btn-delete svg {
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .trash-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  .trash-empty {
+    padding: 3rem 1.5rem;
+    min-height: 300px;
+  }
+
+  .trash-empty-icon {
+    margin-bottom: 1rem;
+  }
+
+  .trash-empty-icon svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .trash-empty-text {
+    font-size: 1.1rem;
+  }
+
+  .trash-item {
+    flex-direction: column;
+    padding: 1.25rem;
+  }
+
+  .trash-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .trash-item-title {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .trash-item-actions {
+    width: 100%;
+    flex-direction: row;
+  }
+
+  .btn-restore,
+  .btn-delete {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .trash-item-info {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .trash-item-label {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .trash-item-actions {
+    flex-direction: column;
+  }
+
+  .btn-restore,
+  .btn-delete {
+    width: 100%;
+  }
+}
+
