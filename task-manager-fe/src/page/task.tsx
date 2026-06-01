@@ -9,7 +9,7 @@ import {
   canUpdateTaskStatus,
   canAssignEmployees,
 } from "../utils/permissions";
-import { apiDownload, apiUpload, apiPut } from "../utils/api";
+import { apiDownload, apiUpload, apiPut, apiGet } from "../utils/api";
 import { useToast } from "../components/ToastProvider";
 import Spinner from "../components/ui/Spinner";
 import EmptyState from "../components/ui/EmptyState";
@@ -78,6 +78,8 @@ const Tasks: React.FC = () => {
   const toast = useToast();
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("kanban");
+  const [categoryList, setCategoryList] = useState<{ categoryId: number; name: string }[]>([]);
+  const [tagList, setTagList] = useState<{ tagId: number; name: string }[]>([]);
   const [tasks, setTasks] = useState<ITask[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -247,6 +249,13 @@ const Tasks: React.FC = () => {
 
   useEffect(() => {
     fetchData();
+    // Fetch categories and tags with IDs for create/update forms
+    apiGet<{ categoryId: number; name: string }[]>("/categories")
+      .then(setCategoryList)
+      .catch(console.error);
+    apiGet<{ tagId: number; name: string }[]>("/tags")
+      .then(setTagList)
+      .catch(console.error);
   }, [fetchData]);
 
   // Get all unique categories and tags
@@ -530,6 +539,16 @@ const Tasks: React.FC = () => {
 
       try {
         // Prepare request body for backend
+        // Resolve category name → ID
+        const categoryId = formData.category
+          ? (categoryList.find((c) => c.name === formData.category)?.categoryId ?? null)
+          : null;
+
+        // Resolve tag names → IDs
+        const tagIds = (formData.tags ?? [])
+          .map((name) => tagList.find((t) => t.name === name)?.tagId)
+          .filter((id): id is number => id !== undefined);
+
         const requestBody = {
           title: formData.title,
           description: formData.description || "",
@@ -537,13 +556,27 @@ const Tasks: React.FC = () => {
           priority: mapPriorityToBackend(formData.priority),
           startDate: formData.start_date || null,
           dueDate: formData.due_date,
-          categoryId: null, // Category will be handled separately if needed
+          categoryId,
           assigneeIds: formData.assignees || [],
-          userId: currentUser?.user_id || null, // User performing the update
+          tagIds,
+          userId: currentUser?.user_id || null,
         };
 
         // Call backend API to update task
         await apiPut(`/tasks/${selectedTask.task_id}`, requestBody);
+
+        // Upload any new attachments added during update
+        if (formData.attachments && formData.attachments.length > 0) {
+          for (const file of formData.attachments) {
+            const fd = new FormData();
+            fd.append("file", file);
+            try {
+              await apiUpload(`/tasks/${selectedTask.task_id}/attachments`, fd);
+            } catch (uploadErr) {
+              console.warn("Attachment upload failed:", uploadErr);
+            }
+          }
+        }
 
         // Refresh the task list to get the updated task
         await fetchData();
@@ -573,6 +606,16 @@ const Tasks: React.FC = () => {
 
       try {
         // Prepare request body for backend
+        // Resolve category name → ID
+        const categoryId = formData.category
+          ? (categoryList.find((c) => c.name === formData.category)?.categoryId ?? null)
+          : null;
+
+        // Resolve tag names → IDs
+        const tagIds = (formData.tags ?? [])
+          .map((name) => tagList.find((t) => t.name === name)?.tagId)
+          .filter((id): id is number => id !== undefined);
+
         const requestBody = {
           title: formData.title,
           description: formData.description || "",
@@ -580,9 +623,10 @@ const Tasks: React.FC = () => {
           priority: mapPriorityToBackend(formData.priority),
           startDate: formData.start_date || null,
           dueDate: formData.due_date,
-          categoryId: null, // Category will be handled separately if needed
+          categoryId,
           createdById: currentUser.user_id,
           assigneeIds: formData.assignees || [],
+          tagIds,
         };
 
         // Call backend API to create task

@@ -7,10 +7,13 @@ import com.taskmanagement.dto.response.PagedResponse;
 import com.taskmanagement.dto.response.TaskDTO;
 import com.taskmanagement.dto.response.TaskSimpleDTO;
 import com.taskmanagement.entity.ActivityLog;
+import com.taskmanagement.entity.Tag;
 import com.taskmanagement.entity.Task;
 import com.taskmanagement.entity.TaskAssignment;
 import com.taskmanagement.entity.User;
 import com.taskmanagement.repository.ActivityLogRepo;
+import com.taskmanagement.repository.TaskAssignmentRepo;
+import com.taskmanagement.repository.TagRepo;
 import com.taskmanagement.repository.CategoryRepo;
 import com.taskmanagement.repository.TaskRepo;
 import com.taskmanagement.repository.UserRepo;
@@ -26,7 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,6 +49,8 @@ public class TaskServiceImpl implements TaskService {
     private final UserRepo userRepository;
     private final CategoryRepo categoryRepository;
     private final ActivityLogRepo activityLogRepository;
+    private final TaskAssignmentRepo taskAssignmentRepository;
+    private final TagRepo tagRepository;
 
     @Override
     public List<TaskSimpleDTO> getAllActiveTasks() {
@@ -133,9 +140,12 @@ public class TaskServiceImpl implements TaskService {
                     
                     // Update task assignments if provided
                     if (request.getAssigneeIds() != null) {
-                        // Remove all existing assignments
+                        // Hard-delete existing rows directly — avoids Hibernate
+                        // orphanRemoval ordering issue (INSERT before DELETE on same unique key)
+                        taskAssignmentRepository.deleteByTaskId(task.getTaskId());
+                        taskAssignmentRepository.flush();
                         task.getTaskAssignments().clear();
-                        
+
                         // Add new assignments
                         request.getAssigneeIds().forEach(userId -> {
                             userRepository.findById(userId).ifPresent(user -> {
@@ -147,6 +157,15 @@ public class TaskServiceImpl implements TaskService {
                         });
                     }
                     
+                    // Update tags if provided
+                    if (request.getTagIds() != null) {
+                        Set<Tag> newTags = new HashSet<>();
+                        request.getTagIds().forEach(tagId ->
+                            tagRepository.findById(tagId).ifPresent(newTags::add)
+                        );
+                        task.setTags(newTags);
+                    }
+
                     validateDates(task.getStartDate(), task.getDueDate());
                     Task savedTask = taskRepository.save(task);
 

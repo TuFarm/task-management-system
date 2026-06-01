@@ -14,6 +14,6 @@ public class UpdateTaskRequest {
     private LocalDate dueDate;
     private Integer categoryId;
     private List<Integer> assigneeIds;
-    private Integer userId; // User who is performing the update
+    private List<Integer> tagIds;
+    private Integer userId;
 }
-
